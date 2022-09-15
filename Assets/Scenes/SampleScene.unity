@@ -447,6 +447,7 @@ MonoBehaviour:
     NameId: "\u0421\u0442\u0430\u043B\u044C\u043D\u043E\u0439 \u043C\u0435\u0447"
     DescriptionId: "\u041E\u0431\u044B\u0447\u043D\u044B\u0439 \u0441\u0442\u0430\u043B\u044C\u043D\u043E\u0439
       \u043C\u0435\u0447. \u0411\u0435\u0437 \u0438\u0437\u043B\u0438\u0448\u0435\u0441\u0442\u0432."
+  _weaponStyle: 1
   _attack: 20
   _weight: 4.2
 --- !u!1 &1234285936
@@ -463,6 +464,8 @@ GameObject:
   - component: {fileID: 1234285937}
   - component: {fileID: 1234285941}
   - component: {fileID: 1234285942}
+  - component: {fileID: 1234285943}
+  - component: {fileID: 1234285944}
   m_Layer: 0
   m_Name: PlayerCharacter
   m_TagString: Untagged
@@ -562,10 +565,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3721926d8952d9e43b52804e221d0f48, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _targetCameraPosition: {x: 0, y: 0, z: -5}
   _characterType: 0
-  _items:
-  - {fileID: 1151546283}
-  _maxInventoryWeight: 585
+  _attackComponent: {fileID: 1234285943}
+  _inventory: {fileID: 1234285944}
+  CharacterSide: 0
 --- !u!114 &1234285942
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -578,4 +582,37 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7662b8b6f951f0c488eee351a010fd4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 3.7
+  _moveAnimator: {fileID: 0}
+  _moveSpeed: 5
+--- !u!114 &1234285943
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1234285936}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80fdd5644ec75644b8b1bb7b54d055c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _attackAnimator: {fileID: 0}
+  _currentWeapon: {fileID: 1151546283}
+  _attackSpeed: 5
+  _isAttacking: 0
+  _attackFlashColor: {r: 1, g: 0, b: 0, a: 0}
+--- !u!114 &1234285944
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1234285936}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 07cbf5a1a564de4419409e6785b58a9f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _items:
+  - {fileID: 1151546283}
+  _maxInventoryWeight: 600

@@ -9,13 +9,14 @@ namespace Lesson_6_8.EditorExtentions.Windows
 {
 	public class CustomInspector : EditorWindow
 	{
-		private static Type _customInspector;
-		private static Type _inspectorWindow;
-		private SerializedObject _currentComponentSer;
-		private Vector2 _scrollPosition;
 		private readonly BindingFlags _flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
 
-		[MenuItem("Extensions/Windows/References Inspector #i", priority = 1)]
+		private static Type _customInspector;
+		private static Type _inspectorWindow;
+		private SerializedObject _currentSerializedComponent;
+		private Vector2 _currentScrollPosition;
+
+		[MenuItem(CustomInspectorConfig.PathInEditor, priority = 1)]
 		public static CustomInspector ShowReferencesInspectorEditor()
 		{
 			var window = GetWindow<CustomInspector>(false, CustomInspectorConfig.WindowName, true);
@@ -39,7 +40,7 @@ namespace Lesson_6_8.EditorExtentions.Windows
 			FocusWindowIfItsOpen(_inspectorWindow);
 		}
 
-		public void OnEnable()
+        public void OnEnable()
 		{
 			Selection.selectionChanged += Repaint;
 		}
@@ -49,14 +50,20 @@ namespace Lesson_6_8.EditorExtentions.Windows
 			Selection.selectionChanged -= Repaint;
 		}
 
-		private void OnGUI()
+        public void OnDestroy()
+        {
+			_customInspector = null;
+			_inspectorWindow = null;
+		}
+
+        private void OnGUI()
 		{
 			DrawSelectedGameObjects();
 		}
 
 		private void DrawSelectedGameObjects()
         {
-			_scrollPosition = EditorGUILayout.BeginScrollView(_scrollPosition);
+			_currentScrollPosition = EditorGUILayout.BeginScrollView(_currentScrollPosition);
 
 			foreach (var obj in Selection.gameObjects)
 			{
@@ -71,21 +78,21 @@ namespace Lesson_6_8.EditorExtentions.Windows
 			if (components.Length == 0) return;
 
 			PrintHeader(obj.name, true);
-			PrintGameObjectComponents(components);
+			PrintComponents(components);
 		}
 
-		private void PrintGameObjectComponents(MonoBehaviour[] components)
+		private void PrintComponents(MonoBehaviour[] components)
         {
 			foreach (var comp in components)
 			{
-				_currentComponentSer = new SerializedObject(comp);
-				_currentComponentSer.Update();
+				_currentSerializedComponent = new SerializedObject(comp);
+				_currentSerializedComponent.Update();
 
 				EditorGUILayout.Space(CustomInspectorConfig.SpacingBetweenComponents);
 				PrintComponent(comp);
 
 				if (GUI.changed) EditorUtility.SetDirty(comp);
-				_currentComponentSer.ApplyModifiedProperties();
+				_currentSerializedComponent.ApplyModifiedProperties();
 			}
 		}
 
@@ -95,6 +102,13 @@ namespace Lesson_6_8.EditorExtentions.Windows
 
 			PrintHeader(componentType.Name, false);
 			PrintComponentFields(componentType.GetFields(_flags));
+		}
+
+		private void PrintHeader(string text, bool isGameObjectHeader)
+		{
+			EditorGUILayout.LabelField(CustomInspectorConfig.Separator);
+			var style = isGameObjectHeader ? CustomInspectorConfig.BigLabelHeaderStyle : CustomInspectorConfig.SmallLabelHeaderStyle;
+			EditorGUILayout.LabelField(text, style, GUILayout.ExpandWidth(true), GUILayout.Height(CustomInspectorConfig.HeaderPlaceHeight));
 		}
 
 		private void PrintComponentFields(FieldInfo[] fieldsToPrint)
@@ -113,16 +127,9 @@ namespace Lesson_6_8.EditorExtentions.Windows
 		private void PrintField(FieldInfo field)
 		{
 			EditorGUILayout.BeginHorizontal();
-            SerializedProperty property = _currentComponentSer.FindProperty(field.Name);
+            SerializedProperty property = _currentSerializedComponent.FindProperty(field.Name);
 			EditorGUILayout.PropertyField(property);
 			EditorGUILayout.EndHorizontal();
-		}
-
-		private void PrintHeader(string text, bool isGameObjectHeader)
-		{
-			EditorGUILayout.LabelField(CustomInspectorConfig.Separator);
-			var style = isGameObjectHeader ? CustomInspectorConfig.BigLabelHeaderStyle : CustomInspectorConfig.SmallLabelHeaderStyle;
-			EditorGUILayout.LabelField(text, style, GUILayout.ExpandWidth(true), GUILayout.Height(30f));
 		}
 	}
 }

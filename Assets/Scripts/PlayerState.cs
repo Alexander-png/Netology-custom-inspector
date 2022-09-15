@@ -6,12 +6,16 @@ namespace Lesson_6_8
     public class PlayerState : MonoBehaviour
     {
         [SerializeField]
-        private CharacterClass _characterType;
+        private Vector3 _targetCameraPosition;
 
         [SerializeField]
-        private SwordPlaceHolder[] _items;
+        private CharacterClass _characterType;
+        
+        [SerializeField]
+        private AttackComponent _attackComponent;
+        [SerializeField]
+        private InventoryComponent _inventory;
 
-        [SerializeField, Range(0f, 10000f)]
-        private float _maxInventoryWeight;
+        public Side CharacterSide;
     }
 }
